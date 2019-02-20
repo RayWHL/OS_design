@@ -101,6 +101,38 @@ void copy_dir(char *PATH1,char *PATH2)
     closedir(dp);
 }
 
+//将PATH1的文件名或者文件夹名 加到PATH2后
+void get_path1_name(char *PATH1,char *PATH2)
+{
+    int len1=strlen(PATH1);
+    int len2=strlen(PATH2);
+    PATH2[len2]='/';
+    ++len2;
+    for(int i=1;i<=len1;++i)
+    {
+        if(PATH1[len1-i]=='/')
+        {
+            int j;
+            for(j=0;j<i-1;++j)
+            {
+                PATH2[len2+j]=PATH1[len1-i+j+1];
+            }
+            PATH2[len2+j]='\0';
+            return;
+        }
+        if(len1-i==0)
+        {
+            int j;
+            for(j=0;j<i;++j)
+            {
+                PATH2[len2+j]=PATH1[len1-i+j];
+            }
+            PATH2[len2+j]='\0';
+            return;
+        }
+    }
+}
+
  
 int main()
 {
@@ -109,17 +141,34 @@ int main()
    	scanf("%s %s",PATH1,PATH2);
 
 
-   	struct stat buf; 
+   	struct stat buf1,buf2;
    	//
 	int result; 
-	result = stat( PATH1, &buf ); 
-	if(S_IFDIR & buf.st_mode)
+	result = stat( PATH1, &buf1 ); 
+    result = stat( PATH2, &buf2 );
+	if(S_IFDIR & buf1.st_mode)
 	{ 
-		copy_dir(PATH1,PATH2);
+        //PAHT1 PAHT2均为文件夹
+        if(S_IFDIR & buf2.st_mode)
+		{
+            get_path1_name(PATH1,PATH2);
+            copy_dir(PATH1,PATH2);
+        }
+        //PATH1为文件夹 PATH2为文件
+        else
+            printf("input error\n");
 	}
-	else if(S_IFREG & buf.st_mode)
+	else if(S_IFREG & buf1.st_mode)
 	{ 
-		copy_file(PATH1,PATH2);
+        //PAHT1为文件，PATH2为文件夹
+        if(S_IFDIR & buf2.st_mode)
+        {
+            get_path1_name(PATH1,PATH2);
+            copy_file(PATH1,PATH2);
+        }
+        //均为文件
+		else if(S_IFREG & buf2.st_mode)
+            copy_file(PATH1,PATH2);
 	} 
 
    	return 0;

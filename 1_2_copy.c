@@ -20,12 +20,12 @@ int main(int argc, char **argv)
     semID2 = semget(semKey2, 2, IPC_CREAT | 0666);
 
     //获取共享内存1
-	shIDS1 = shmget(shKeyS1, sizeof(sharedBuf), IPC_CREAT | 0666);
-	sBuf1 = (sharedBuf*)shmat(shIDS1, NULL, 0);
+    shIDS1 = shmget(shKeyS1, sizeof(sharedBuf), IPC_CREAT | 0666);
+    sBuf1 = (sharedBuf*)shmat(shIDS1, NULL, 0);
 
     //获取共享内存2
-	shIDS2 = shmget(shKeyS2, sizeof(sharedBuf), IPC_CREAT | 0666);
-	sBuf2 = (sharedBuf*)shmat(shIDS2, NULL, 0);
+    shIDS2 = shmget(shKeyS2, sizeof(sharedBuf), IPC_CREAT | 0666);
+    sBuf2 = (sharedBuf*)shmat(shIDS2, NULL, 0);
 
     GtkWidget *window;
     GtkWidget *vbox;

@@ -7,6 +7,7 @@
 int semID1,shIDS1;
 sharedBuf *sBuf;
 FILE *fp;
+int last_size=1;
 
 gint print_get(gpointer label);
 
@@ -23,11 +24,12 @@ int main(int argc, char **argv)
     semID1 = semget(semKey1, 2, IPC_CREAT | 0666);
 
     //获取共享内存1
-	shIDS1 = shmget(shKeyS1, sizeof(sharedBuf), IPC_CREAT | 0666);
-	sBuf = (sharedBuf*)shmat(shIDS1, NULL, 0);
+    shIDS1 = shmget(shKeyS1, sizeof(sharedBuf), IPC_CREAT | 0666);
+    sBuf = (sharedBuf*)shmat(shIDS1, NULL, 0);
 
     //打开get的文件
     fp = fopen(get_path, "rb");
+
 
     //窗口创建以及设置
     GtkWidget *window;
@@ -35,6 +37,7 @@ int main(int argc, char **argv)
     GtkWidget *button;
     GtkWidget *label;
     gpointer data;
+    gtk_set_locale();
    //初始化gtk库
     gtk_init (&argc, &argv);
     //新建一个顶层窗口
@@ -72,13 +75,17 @@ int main(int argc, char **argv)
 
 gint print_get (gpointer label)
 {
-    P(semID1, 0);
-    int size = fread(sBuf->data, sizeof(char), 10, fp);
-    sBuf->length=size;
-    V(semID1, 1);
-
+    if(last_size!=0)
+    {
+        P(semID1, 0);
+        int size = fread(sBuf->data, sizeof(char), 10, fp);
+        sBuf->length=size;
+        V(semID1, 1);
+        last_size=size;
+    }
+    
     char string[50];
-    if(size==0)
+    if(last_size==0)
     {
         sprintf(string,"get:结束");
     }

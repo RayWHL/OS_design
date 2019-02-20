@@ -24,8 +24,8 @@ int main(void)
     semID2 = semget(semKey2, 2, IPC_CREAT | 0666);
 
     //获取共享内存2
-	shIDS2 = shmget(shKeyS2, sizeof(sharedBuf), IPC_CREAT | 0666);
-	sBuf2 = (sharedBuf*)shmat(shIDS2, NULL, 0);
+    shIDS2 = shmget(shKeyS2, sizeof(sharedBuf), IPC_CREAT | 0666);
+    sBuf2 = (sharedBuf*)shmat(shIDS2, NULL, 0);
 
     //打开get的文件
     fp2 = fopen(put_path, "wb");
